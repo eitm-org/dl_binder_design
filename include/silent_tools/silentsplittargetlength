@@ -18,15 +18,16 @@ signal(SIGPIPE, SIG_DFL)
 
 if (len(sys.argv) != 3):
     eprint("")
-    eprint("silentsplitbylength by Nate - a tool to split a silentfile into parts with the same sequence length. This is crucial for getting good performance when running AF2.")
+    eprint("silentsplittargetlength by bcov - a tool to split a silentfile into parts with the same sequence length. This is crucial for getting good performance when running AF2.")
+    eprint("                                    This makes an improvement over silentsplitbylength in checking the target length too (which af2 cares about)")
     eprint("Usage:")
-    eprint("        silentsplitbylength myfile.silent TAGS_PER_SILENT_FILE")
+    eprint("        silentsplittargetlength myfile.silent TAGS_PER_SILENT_FILE")
     sys.exit(1)
 
 silent_file = sys.argv[1]
 
 if ( not os.path.exists(silent_file) ):
-    eprint("silentsplitbylength: File not found " + silent_file)
+    eprint("silentsplittargetlength: File not found " + silent_file)
     assert(False)
 
 tags_per = sys.argv[2]
@@ -34,7 +35,7 @@ try:
     tags_per = int(tags_per)
     assert(tags_per > 0)
 except:
-    eprint("silentsplitbylength: Second argument must be a number greater than 0")
+    eprint("silentsplittargetlength: Second argument must be a number greater than 0")
     assert(False)
 
 alpha = "abcdefghijklmnopqrstuvwxyz"
@@ -54,11 +55,8 @@ def get_split_str2(number):
             return get_split_str(width, number)
         number -= this_num
 
-def get_sequence_length( structure ):
-    for line in structure.split('\n'):
-        if not line.startswith( "ANNOTATED_SEQUENCE" ): continue
-        return len( re.sub( "\[.*?\]", "", line.split(' ')[1] ) )
-    raise Exception( "No ANNOTATED_SEQUENCE line found in silent file. Are you sure the file is correctly formatted?" )
+def get_length_str( structure ):
+    return '_'.join('%i'%len(x) for x in silent_tools.get_sequence_chunks(structure))
 
 def newfile( seqlen, idx ):
     f = open( f"len{seqlen}{get_split_str2(idx)}.silent", "w" )
@@ -110,8 +108,8 @@ while cur_struct < total_structures:
                         silent_index, cur_struct, cur_struct+seek_size, True )
 
     for structure in structures:
-        seqlen = get_sequence_length( structure )
-        add2length_file( structure, seqlen, file_dict )
+        lenstr = get_length_str( structure.split("\n") )
+        add2length_file( structure, lenstr, file_dict )
 
     cur_struct += seek_size
 

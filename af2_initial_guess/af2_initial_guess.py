@@ -31,34 +31,9 @@ from silent_tools import silent_tools
 from pyrosetta import *
 from rosetta import *
 init( '-in:file:silent_struct_type binary -mute all' )
+from omegaconf import OmegaConf
 
 def range1(size): return range(1, size+1)
-
-#################################
-# Parse Arguments
-#################################
-
-parser = argparse.ArgumentParser()
-
-# I/O Arguments
-parser.add_argument( "-pdbdir", type=str, default="", help='The name of a directory of pdbs to run through the model' )
-parser.add_argument( "-silent", type=str, default="", help='The name of a silent file to run through the model' )
-parser.add_argument( "-outpdbdir", type=str, default="outputs", help='The directory to which the output PDB files will be written. Only used when -pdbdir is active' )
-parser.add_argument( "-outsilent", type=str, default="out.silent", help='The name of the silent file to which output structs will be written. Only used when -silent is active' )
-parser.add_argument( "-runlist", type=str, default='', help="The path of a list of pdb tags to run. Only used when -pdbdir is active (default: ''; Run all PDBs)" )
-parser.add_argument( "-checkpoint_name", type=str, default='check.point', help="The name of a file where tags which have finished will be written (default: check.point)" )
-parser.add_argument( "-scorefilename", type=str, default='out.sc', help="The name of a file where scores will be written (default: out.sc)" )
-parser.add_argument( "-maintain_res_numbering", action="store_true", default=False, help='When active, the model will not renumber the residues when bad inputs are encountered (default: False)' )
-
-parser.add_argument( "-debug", action="store_true", default=False, help='When active, errors will cause the script to crash and the error message to be printed out (default: False)')
-
-# AF2-Specific Arguments
-parser.add_argument( "-max_amide_dist", type=float, default=3.0, help='The maximum distance between an amide bond\'s carbon and nitrogen (default: 3.0)' )
-parser.add_argument( "-recycle", type=int, default=3, help='The number of AF2 recycles to perform (default: 3)' )
-parser.add_argument( "-no_initial_guess", action="store_true", default=False, help='When active, the model will not use an initial guess (default: False)' )
-parser.add_argument( "-force_monomer", action="store_true", default=False, help='When active, the model will predict the structure of a monomer (default: False)' )
-
-args = parser.parse_args()
 
 class FeatureHolder():
     '''
@@ -314,7 +289,7 @@ class StructManager():
 
         self.maintain_res_numbering = args.maintain_res_numbering
 
-        self.score_fn = args.scorefilename
+        self.score_fn = os.path.join(args.outdir, 'out.sc')
 
         # Generate a random unique temporary filename
         self.tmp_fn = f'tmp_{uuid.uuid4()}.pdb'
@@ -330,28 +305,18 @@ class StructManager():
             self.sfd_in = rosetta.core.io.silent.SilentFileData(rosetta.core.io.silent.SilentFileOptions())
             self.sfd_in.read_file(args.silent)
 
-            self.sfd_out = core.io.silent.SilentFileData(args.outsilent, False, False, "binary", core.io.silent.SilentFileOptions())
+            self.sfd_out = core.io.silent.SilentFileData(args.outdir, False, False, "binary", core.io.silent.SilentFileOptions())
 
-            self.outsilent = args.outsilent
+            self.outdir = args.outdir
 
         self.pdb = False
         if not args.pdbdir == '':
             self.pdb = True
 
-            self.pdbdir    = args.pdbdir
-            self.outpdbdir = args.outpdbdir
+            self.pdbdir = args.pdbdir
+            self.outdir = args.outdir
 
             self.struct_iterator = glob.glob(os.path.join(args.pdbdir, '*.pdb'))
-
-            # Parse the runlist and determine which structures to process
-            if args.runlist != '':
-                with open(args.runlist, 'r') as f:
-                    self.runlist = set([line.strip() for line in f])
-
-                    # Filter the struct iterator to only include those in the runlist
-                    self.struct_iterator = [struct for struct in self.struct_iterator if '.'.join(os.path.basename(struct).split('.')[:-1]) in self.runlist]
-
-                    print(f'After filtering by runlist, {len(self.struct_iterator)} structures remain')
 
         # Assert that either silent or pdb is true, but not both
         assert(self.silent ^ self.pdb), f'Both silent and pdb are set to {args.silent} and {args.pdb} respectively. Only one of these may be active at a time'
@@ -449,14 +414,14 @@ class StructManager():
         
         # Assign the pose the updated pdb_info
         pose.pdb_info(info)
+        
+        # If the outdir does not exist, create it
+        # If there are parents in the path that do not exist, create them as well
+        if not os.path.exists(self.outdir):
+            os.makedirs(self.outdir)
 
         if self.pdb:
-            # If the outpdbdir does not exist, create it
-            # If there are parents in the path that do not exist, create them as well
-            if not os.path.exists(self.outpdbdir):
-                os.makedirs(self.outpdbdir)
-
-            pdbfile = os.path.join(self.outpdbdir, feat_holder.outtag + '.pdb')
+            pdbfile = os.path.join(self.outdir, feat_holder.outtag + '.pdb')
             pose.dump_pdb(pdbfile)
         
         if self.silent:
@@ -468,7 +433,7 @@ class StructManager():
                 struct.add_energy(scorename, value, 1)
 
             self.sfd_out.add_structure(struct)
-            self.sfd_out.write_silent_struct(struct, self.outsilent)
+            self.sfd_out.write_silent_struct(struct, self.outdir)
 
     def load_pose(self, tag):
         '''
@@ -534,39 +499,65 @@ class StructManager():
 ####### Main #######
 ####################
 
-device = xla_bridge.get_backend().platform
-if device == 'gpu':
-    print('/' * 60)
-    print('/' * 60)
-    print('Found GPU and will use it to run AF2')
-    print('/' * 60)
-    print('/' * 60)
-    print('\n')
-else:
-    print('/' * 60)
-    print('/' * 60)
-    print('WARNING! No GPU detected running AF2 on CPU')
-    print('/' * 60)
-    print('/' * 60)
-    print('\n')
+def run(config_file):
 
-struct_manager = StructManager(args)
-af2_runner     = AF2_runner(args, struct_manager)
+    # Read configuration file
+    conf = OmegaConf.load(config_file)
 
-for pdb in struct_manager.iterate():
+    ##### Arguments
+    parser = argparse.ArgumentParser()
 
-    if args.debug: af2_runner.process_struct(pdb)
+    # I/O Arguments
+    parser.add_argument( "-seqdir", type=str, default=conf.af2ig.seqdir, help='The name of a directory of seqs to run through the model' )
+    parser.add_argument( "-pdbdir", type=str, default=conf.af2ig.pdbdir, help='The name of a directory of pdbs to run through the model' )
+    parser.add_argument( "-silent", type=str, default=conf.af2ig.silent, help='The name of a silent file to run through the model' )
+    parser.add_argument( "-outdir", type=str, default=os.path.join(conf.af2ig.outdir, 'initial_guess'), help='The directory to which all output files will be written' )
+    parser.add_argument( "-checkpoint_name", type=str, default=os.path.join(conf.af2ig.outdir, 'check.point'), help="The name of a file where tags which have finished will be written (default: check.point)" )
+    parser.add_argument( "-maintain_res_numbering", action="store_true", default=False, help='When active, the model will not renumber the residues when bad inputs are encountered (default: False)' )
 
-    else: # When not in debug mode the script will continue to run even when some poses fail
-        t0 = timer()
+    parser.add_argument( "-debug", action="store_true", default=False, help='When active, errors will cause the script to crash and the error message to be printed out (default: False)')
 
-        try: af2_runner.process_struct(pdb)
+    # AF2-Specific Arguments
+    parser.add_argument( "-max_amide_dist", type=float, default=3.0, help='The maximum distance between an amide bond\'s carbon and nitrogen (default: 3.0)' )
+    parser.add_argument( "-recycle", type=int, default=3, help='The number of AF2 recycles to perform (default: 3)' )
+    parser.add_argument( "-no_initial_guess", action="store_true", default=False, help='When active, the model will not use an initial guess (default: False)' )
+    parser.add_argument( "-force_monomer", action="store_true", default=False, help='When active, the model will predict the structure of a monomer (default: False)' )
 
-        except KeyboardInterrupt: sys.exit( "Script killed by Control+C, exiting" )
+    args = parser.parse_args()
 
-        except:
-            seconds = int(timer() - t0)
-            print( "Struct with tag %s failed in %i seconds with error: %s"%( pdb, seconds, sys.exc_info()[0] ) )
+    device = xla_bridge.get_backend().platform
+    if device == 'gpu':
+        print('/' * 60)
+        print('/' * 60)
+        print('Found GPU and will use it to run AF2')
+        print('/' * 60)
+        print('/' * 60)
+        print('\n')
+    else:
+        print('/' * 60)
+        print('/' * 60)
+        print('WARNING! No GPU detected running AF2 on CPU')
+        print('/' * 60)
+        print('/' * 60)
+        print('\n')
 
-    # We are done with one pdb, record that we finished
-    struct_manager.record_checkpoint(pdb)
+    struct_manager = StructManager(args)
+    af2_runner     = AF2_runner(args, struct_manager)
+
+    for pdb in struct_manager.iterate():
+
+        if args.debug: af2_runner.process_struct(pdb)
+
+        else: # When not in debug mode the script will continue to run even when some poses fail
+            t0 = timer()
+
+            try: af2_runner.process_struct(pdb)
+
+            except KeyboardInterrupt: sys.exit( "Script killed by Control+C, exiting" )
+
+            except:
+                seconds = int(timer() - t0)
+                print( "Struct with tag %s failed in %i seconds with error: %s"%( pdb, seconds, sys.exc_info()[0] ) )
+
+        # We are done with one pdb, record that we finished
+        struct_manager.record_checkpoint(pdb)

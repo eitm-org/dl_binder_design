@@ -10,3 +10,5 @@ dependencies:
   - biopython
   - ml-collections
   - pyrosetta
+  - mkl=2024.0.0
+
