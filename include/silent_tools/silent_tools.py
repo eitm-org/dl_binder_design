@@ -16,7 +16,7 @@ import bz2
 import random
 import string
 
-from _helpers_silent.rosetta_util import (format_atom, write_pdb_atoms, code_from_6bit, decode_32_to_24,
+from silent_tools._helpers_silent.rosetta_util import (format_atom, write_pdb_atoms, code_from_6bit, decode_32_to_24,
             decode6bit, code_from_6bit, decode_32_to_24, decode6bit,
             get_silent_res_data, chain_ids_to_silent_format,
             silent_line_to_atoms, get_chains_mask,
