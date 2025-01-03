@@ -16,7 +16,7 @@ import glob
 import torch
 import json
 
-import util_protein_mpnn as mpnn_util
+import mpnn_fr.util_protein_mpnn as mpnn_util
 from Bio import SeqIO
 from omegaconf import OmegaConf
 
