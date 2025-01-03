@@ -102,7 +102,7 @@ class ProteinMPNN_runner():
             self.device = "cpu"
 
         # Configs for the FastRelax cycles
-        xml = os.path.join(script_dir, 'RosettaFastRelaxUtil.xml')
+        xml = os.path.join('mpnn_fr', 'RosettaFastRelaxUtil.xml')
         objs = protocols.rosetta_scripts.XmlObjects.create_from_file(xml)
 
         self.FastRelax = objs.get_mover('FastRelax')
@@ -323,7 +323,7 @@ def run(config_file):
     parser.add_argument( "-output_intermediates", action="store_true", help='Whether to write all intermediate sequences from the relax cycles to disk (default: False)' )
     parser.add_argument( "-seqs_per_struct", type=int, default="1", help="The number of sequences to generate for each structure (default: 1)" )
 
-    args = parser.parse_args( sys.argv[1:] )
+    args, unknown = parser.parse_known_args( sys.argv[1:] )
 
     struct_manager     = StructManager(args)
     proteinmpnn_runner = ProteinMPNN_runner(args, struct_manager)
