@@ -1,1 +1,1 @@
-include *.xml
+include mpnn_fr/*.xml
