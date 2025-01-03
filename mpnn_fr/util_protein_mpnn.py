@@ -2,7 +2,7 @@ import numpy as np
 import torch
 import copy
 
-from ProteinMPNN.protein_mpnn_utils import ProteinMPNN, tied_featurize, _scores, _S_to_seq
+from proteinmpnn.protein_mpnn_utils import ProteinMPNN, tied_featurize, _scores, _S_to_seq
 
 #################################
 # Function Definitions

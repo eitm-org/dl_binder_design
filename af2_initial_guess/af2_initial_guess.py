@@ -22,7 +22,7 @@ from alphafold.model import data
 from alphafold.model import config
 from alphafold.model import model
 
-import af2_util
+import af2_initial_guess.af2_util
 
 parent = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(os.path.join(parent, 'include'))
