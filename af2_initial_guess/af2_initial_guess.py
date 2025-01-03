@@ -22,7 +22,7 @@ from alphafold.model import data
 from alphafold.model import config
 from alphafold.model import model
 
-import af2_initial_guess.af2_util
+from af2_initial_guess import af2_util
 
 parent = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(os.path.join(parent, 'include'))
@@ -85,8 +85,6 @@ class AF2_runner():
 
         model_config.data.common.max_extra_msa = 5
         model_config.data.eval.max_msa_clusters = 5
-
-        params_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)),'model_weights')
 
         model_params = data.get_model_haiku_params(model_name=self.model_name, data_dir=params_dir)
 
@@ -522,6 +520,7 @@ def run(config_file):
     parser.add_argument( "-recycle", type=int, default=3, help='The number of AF2 recycles to perform (default: 3)' )
     parser.add_argument( "-no_initial_guess", action="store_true", default=False, help='When active, the model will not use an initial guess (default: False)' )
     parser.add_argument( "-force_monomer", action="store_true", default=False, help='When active, the model will predict the structure of a monomer (default: False)' )
+    params_dir = conf.af2.params
 
     args = parser.parse_args()
 
