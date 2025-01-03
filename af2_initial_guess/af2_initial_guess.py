@@ -522,7 +522,7 @@ def run(config_file):
     parser.add_argument( "-force_monomer", action="store_true", default=False, help='When active, the model will predict the structure of a monomer (default: False)' )
     params_dir = conf.af2.params
 
-    args = parser.parse_args()
+    args, unknown = parser.parse_known_args()
 
     device = xla_bridge.get_backend().platform
     if device == 'gpu':
