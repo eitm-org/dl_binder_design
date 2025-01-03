@@ -16,5 +16,5 @@ setup(
             'tensorboard',
             'pytorch_lightning'
       ],
-      package_data={'': ['mpnn_fr/RosettaFastRelaxUtil.xml']}
+      include_package_data=True
 )
