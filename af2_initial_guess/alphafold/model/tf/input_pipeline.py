@@ -16,8 +16,8 @@
 import tensorflow.compat.v1 as tf
 import tree
 
-from af2_initial_guess.alphafold.model.tf import data_transforms
-from af2_initial_guess.alphafold.model.tf import shape_placeholders
+from alphafold.model.tf import data_transforms
+from alphafold.model.tf import shape_placeholders
 
 # Pylint gets confused by the curry1 decorator because it changes the number
 #   of arguments to the function.

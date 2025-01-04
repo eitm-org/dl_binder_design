@@ -19,7 +19,7 @@ from absl.testing import absltest
 from absl.testing import parameterized
 import tensorflow.compat.v1 as tf
 
-from af2_initial_guess.alphafold.model.tf import protein_features
+from alphafold.model.tf import protein_features
 
 
 def _random_bytes():

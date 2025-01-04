@@ -24,9 +24,9 @@ import numpy as np
 from af2_initial_guess.alphafold.common import residue_constants
 from af2_initial_guess.alphafold.data import parsers
 from af2_initial_guess.alphafold.data import templates
-from af2_initial_guess.alphafold.data.tools import hhblits
-from af2_initial_guess.alphafold.data.tools import hhsearch
-from af2_initial_guess.alphafold.data.tools import jackhmmer
+from alphafold.data.tools import hhblits
+from alphafold.data.tools import hhsearch
+from alphafold.data.tools import jackhmmer
 
 FeatureDict = Mapping[str, np.ndarray]
 

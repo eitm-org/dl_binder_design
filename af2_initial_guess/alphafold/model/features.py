@@ -20,8 +20,8 @@ import ml_collections
 import numpy as np
 import tensorflow.compat.v1 as tf
 
-from af2_initial_guess.alphafold.model.tf import input_pipeline
-from af2_initial_guess.alphafold.model.tf import proteins_dataset
+from alphafold.model.tf import input_pipeline
+from alphafold.model.tf import proteins_dataset
 
 FeatureDict = Mapping[str, np.ndarray]
 

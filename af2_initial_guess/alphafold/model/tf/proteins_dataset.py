@@ -18,7 +18,7 @@ from typing import Dict, Mapping, Optional, Sequence
 import numpy as np
 import tensorflow.compat.v1 as tf
 
-from af2_initial_guess.alphafold.model.tf import protein_features
+from alphafold.model.tf import protein_features
 
 TensorDict = Dict[str, tf.Tensor]
 

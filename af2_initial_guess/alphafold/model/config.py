@@ -16,7 +16,7 @@
 import copy
 import ml_collections
 
-from af2_initial_guess.alphafold.model.tf import shape_placeholders
+from alphafold.model.tf import shape_placeholders
 
 
 NUM_RES = shape_placeholders.NUM_RES

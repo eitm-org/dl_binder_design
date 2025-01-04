@@ -17,7 +17,7 @@
 import numpy as np
 import tensorflow.compat.v1 as tf
 
-from af2_initial_guess.alphafold.model.tf import shape_helpers
+from alphafold.model.tf import shape_helpers
 
 
 class ShapeTest(tf.test.TestCase):

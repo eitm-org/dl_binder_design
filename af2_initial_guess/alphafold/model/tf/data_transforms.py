@@ -17,9 +17,9 @@ import numpy as np
 import tensorflow.compat.v1 as tf
 
 from af2_initial_guess.alphafold.common import residue_constants
-from af2_initial_guess.alphafold.model.tf import shape_helpers
-from af2_initial_guess.alphafold.model.tf import shape_placeholders
-from af2_initial_guess.alphafold.model.tf import utils
+from alphafold.model.tf import shape_helpers
+from alphafold.model.tf import shape_placeholders
+from alphafold.model.tf import utils
 
 # Pylint gets confused by the curry1 decorator because it changes the number
 #   of arguments to the function.
