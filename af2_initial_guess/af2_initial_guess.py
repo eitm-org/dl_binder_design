@@ -287,6 +287,11 @@ class StructManager():
 
         self.maintain_res_numbering = args.maintain_res_numbering
 
+        # If the outdir does not exist, create it
+        # If there are parents in the path that do not exist, create them as well
+        if not os.path.exists(args.outdir):
+            os.makedirs(args.outdir)
+
         self.score_fn = os.path.join(args.outdir, 'out.sc')
 
         # Generate a random unique temporary filename
@@ -412,11 +417,6 @@ class StructManager():
         
         # Assign the pose the updated pdb_info
         pose.pdb_info(info)
-        
-        # If the outdir does not exist, create it
-        # If there are parents in the path that do not exist, create them as well
-        if not os.path.exists(self.outdir):
-            os.makedirs(self.outdir)
 
         if self.pdb:
             pdbfile = os.path.join(self.outdir, feat_holder.outtag + '.pdb')
