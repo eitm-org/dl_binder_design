@@ -6,7 +6,7 @@ setup(
       version='0.0.1',
       description='alphafold2 initial guess (but no proteinMPNN)',
       url = 'https://github.com/eitm-org/dl_binder_design',
-      packages=find_packages(),
+      packages=find_packages(include=['mpnn_fr', 'af2_initial_guess', 'af2_initial_guess/alphafold', 'af2_initial_guess/alphafold/*', 'include' ]),
       install_requires=[
             'tqdm',
             'numpy',

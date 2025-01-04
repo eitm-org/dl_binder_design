@@ -86,7 +86,7 @@ class AF2_runner():
         model_config.data.common.max_extra_msa = 5
         model_config.data.eval.max_msa_clusters = 5
 
-        model_params = data.get_model_haiku_params(model_name=self.model_name, data_dir=params_dir)
+        model_params = data.get_model_haiku_params(model_name=self.model_name, data_dir=args.params_dir)
 
         self.model_runner = model.RunModel(model_config, model_params)
 
@@ -295,7 +295,7 @@ class StructManager():
         self.force_monomer = args.force_monomer
 
         self.silent = False
-        if not args.silent == '':
+        if not args.silent == None:
             self.silent = True
 
             self.struct_iterator = silent_tools.get_silent_index(args.silent)['tags']
@@ -308,7 +308,7 @@ class StructManager():
             self.outdir = args.outdir
 
         self.pdb = False
-        if not args.pdbdir == '':
+        if not args.pdbdir == None:
             self.pdb = True
 
             self.pdbdir = args.pdbdir
@@ -513,14 +513,14 @@ def run(config_file):
     parser.add_argument( "-checkpoint_name", type=str, default=os.path.join(conf.af2ig.outdir, 'check.point'), help="The name of a file where tags which have finished will be written (default: check.point)" )
     parser.add_argument( "-maintain_res_numbering", action="store_true", default=False, help='When active, the model will not renumber the residues when bad inputs are encountered (default: False)' )
 
-    parser.add_argument( "-debug", action="store_true", default=False, help='When active, errors will cause the script to crash and the error message to be printed out (default: False)')
+    parser.add_argument( "-debug", action="store_true", default=True, help='When active, errors will cause the script to crash and the error message to be printed out (default: False)')
 
     # AF2-Specific Arguments
     parser.add_argument( "-max_amide_dist", type=float, default=3.0, help='The maximum distance between an amide bond\'s carbon and nitrogen (default: 3.0)' )
     parser.add_argument( "-recycle", type=int, default=3, help='The number of AF2 recycles to perform (default: 3)' )
     parser.add_argument( "-no_initial_guess", action="store_true", default=False, help='When active, the model will not use an initial guess (default: False)' )
     parser.add_argument( "-force_monomer", action="store_true", default=False, help='When active, the model will predict the structure of a monomer (default: False)' )
-    params_dir = conf.af2.params
+    parser.add_argument( "-params_dir", default = conf.af2.params)
 
     args, unknown = parser.parse_known_args()
 

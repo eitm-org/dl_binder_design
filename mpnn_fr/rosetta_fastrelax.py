@@ -24,9 +24,6 @@ parent = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(os.path.join(parent, 'include'))
 from silent_tools import silent_tools
 
-init( "-beta_nov16 -in:file:silent_struct_type binary -mute all" +
-    " -use_terminal_residues true -mute basic.io.database core.scoring" )
-
 def cmd(command, wait=True):
     the_command = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
     if (not wait):
@@ -93,6 +90,13 @@ class ProteinMPNN_runner():
 
     def __init__(self, args, struct_manager):
         self.struct_manager = struct_manager
+        
+        self.relax_cycles = args.relax_cycles
+        self.output_intermediates = args.output_intermediates
+        self.seqs_per_struct = args.seqs_per_struct
+
+        init( "-beta_nov16 -corrections::beta_nov16 -in:file:silent_struct_type binary -mute all" +
+        " -use_terminal_residues true -mute basic.io.database core.scoring" )
 
         if torch.cuda.is_available():
             print('Found GPU will run ProteinMPNN on GPU')
@@ -102,12 +106,10 @@ class ProteinMPNN_runner():
             self.device = "cpu"
 
         # Configs for the FastRelax cycles
-        xml = os.path.join('mpnn_fr', 'RosettaFastRelaxUtil.xml')
+        xml = os.path.join('..', 'conditional_generation_inputs', 'initial_guess', 'RosettaFastRelaxUtil.xml')
         objs = protocols.rosetta_scripts.XmlObjects.create_from_file(xml)
 
         self.FastRelax = objs.get_mover('FastRelax')
-
-        self.relax_cycles = args.relax_cycles
 
     def relax_pose(self, sample_feats):
         '''
@@ -147,7 +149,7 @@ class ProteinMPNN_runner():
 
         outtag = f"{sample_feats.tag}_dldesign"
 
-        for cycle in range(args.relax_cycles):
+        for cycle in range(self.relax_cycles):
 
             for seq_record in SeqIO.parse(sequence, "fasta"):
                 seq = seq_record.seq
@@ -156,12 +158,12 @@ class ProteinMPNN_runner():
 
             self.relax_pose(sample_feats)
 
-            if args.output_intermediates:
+            if self.output_intermediates:
                 tag = f"{outtag}_0_cycle{cycle}"
                 self.struct_manager.dump_pose(sample_feats.pose, tag)
 
         sample_feats.thread_mpnn_seq(seq)
-        tag = f"{outtag}_cycle{args.relax_cycles}"
+        tag = f"{outtag}_cycle{self.relax_cycles}"
         self.struct_manager.dump_pose(sample_feats.pose, tag)
 
     def run_model(self, pdb, seq, args):
@@ -179,7 +181,7 @@ class ProteinMPNN_runner():
         # sample_feats.parse_fixed_res()
 
         # Now determine which type of run we are doing and execute it
-        if args.relax_cycles > 0:
+        if self.relax_cycles > 0:
             if args.seqs_per_struct > 1:
                 raise Exception('Cannot use --seqs_per_struct > 1 with --relax_cycles > 0')
 
@@ -215,7 +217,7 @@ class StructManager():
             self.struct_iterator = glob.glob(os.path.join(args.pdbdir, '*.pdb'))
 
         self.silent = False
-        if not args.silent == '':
+        if not args.silent == None:
             self.silent = True
 
             self.struct_iterator = silent_tools.get_silent_index(args.silent)['tags']
@@ -310,20 +312,20 @@ def run(config_file):
     ##### Arguments
     parser = argparse.ArgumentParser()
 
-    parser.add_argument( "-seqdir", type=str, default=conf.af2ig.seqdir, help='The name of a directory of seqs to run through the model' )
-    parser.add_argument( "-pdbdir", type=str, default=conf.af2ig.pdbdir, help='The name of a directory of pdbs to run through the model' )
-    parser.add_argument( "-silent", type=str, default=conf.af2ig.silent, help='The name of a silent file to run through the model' )
-    parser.add_argument( "-outdir", type=str, default=os.path.join(conf.af2ig.outdir, 'fast_relax'), help='The directory to which all output files will be written' )
+    parser.add_argument( "--seqdir", type=str, default=conf.af2ig.seqdir, help='The name of a directory of seqs to run through the model' )
+    parser.add_argument( "--pdbdir", type=str, default=conf.af2ig.pdbdir, help='The name of a directory of pdbs to run through the model' )
+    parser.add_argument( "--silent", type=str, default=conf.af2ig.silent, help='The name of a silent file to run through the model' )
+    parser.add_argument( "--outdir", type=str, default=os.path.join(conf.af2ig.outdir, 'fast_relax'), help='The directory to which all output files will be written' )
 
-    parser.add_argument( "-checkpoint_name", type=str, default=os.path.join(conf.af2ig.outdir, 'check.point'), help="The name of a file where tags which have finished will be written (default: check.point)" )
-    parser.add_argument( "-debug", action="store_true", default=False, help='When active, errors will cause the script to crash and the error message to be printed out (default: False)')
+    parser.add_argument( "--checkpoint_name", type=str, default=os.path.join(conf.af2ig.outdir, 'check.point'), help="The name of a file where tags which have finished will be written (default: check.point)" )
+    parser.add_argument( "--debug", action="store_true", default=True, help='When active, errors will cause the script to crash and the error message to be printed out (default: False)')
 
     # Design Arguments
-    parser.add_argument( "-relax_cycles", type=int, default=1, help="The number of relax cycles to perform on each structure (default: 1)" )
-    parser.add_argument( "-output_intermediates", action="store_true", help='Whether to write all intermediate sequences from the relax cycles to disk (default: False)' )
-    parser.add_argument( "-seqs_per_struct", type=int, default="1", help="The number of sequences to generate for each structure (default: 1)" )
+    parser.add_argument( "--relax_cycles", type=int, default=1, help="The number of relax cycles to perform on each structure (default: 1)" )
+    parser.add_argument( "--output_intermediates", action="store_true", help='Whether to write all intermediate sequences from the relax cycles to disk (default: False)' )
+    parser.add_argument( "--seqs_per_struct", type=int, default="1", help="The number of sequences to generate for each structure (default: 1)" )
 
-    args, unknown = parser.parse_known_args( sys.argv[1:] )
+    args, unknown = parser.parse_known_args()
 
     struct_manager     = StructManager(args)
     proteinmpnn_runner = ProteinMPNN_runner(args, struct_manager)
