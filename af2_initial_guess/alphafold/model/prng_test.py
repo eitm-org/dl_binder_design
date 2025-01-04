@@ -17,7 +17,7 @@
 from absl.testing import absltest
 import jax
 
-from alphafold.model import prng
+from af2_initial_guess.alphafold.model import prng
 
 
 class PrngTest(absltest.TestCase):

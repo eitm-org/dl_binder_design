@@ -20,7 +20,7 @@ import numpy as np
 from simtk.openmm import app as openmm_app
 from simtk.openmm.app.internal.pdbstructure import PdbStructure
 
-from alphafold.common import residue_constants
+from af2_initial_guess.alphafold.common import residue_constants
 
 
 def overwrite_pdb_coordinates(pdb_str: str, pos) -> str:

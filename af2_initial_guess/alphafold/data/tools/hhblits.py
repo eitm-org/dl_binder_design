@@ -20,7 +20,7 @@ import subprocess
 from typing import Any, Mapping, Optional, Sequence
 
 from absl import logging
-from alphafold.data.tools import utils
+from af2_initial_guess.alphafold.data.tools import utils
 # Internal import (7716).
 
 

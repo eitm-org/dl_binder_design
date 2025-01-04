@@ -17,9 +17,9 @@ from typing import Any, Dict, Sequence, Tuple
 
 import numpy as np
 
-from alphafold.common import protein
-from alphafold.relax import amber_minimize
-from alphafold.relax import utils
+from af2_initial_guess.alphafold.common import protein
+from af2_initial_guess.alphafold.relax import amber_minimize
+from af2_initial_guess.alphafold.relax import utils
 
 
 class AmberRelaxation(object):

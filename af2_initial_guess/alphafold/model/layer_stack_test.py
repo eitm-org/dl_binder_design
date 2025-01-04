@@ -23,7 +23,7 @@ import jax.numpy as jnp
 import numpy as np
 import scipy
 
-from alphafold.model import layer_stack
+from af2_initial_guess.alphafold.model import layer_stack
 
 
 # Suffixes applied by Haiku for repeated module names.

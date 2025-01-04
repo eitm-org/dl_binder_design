@@ -18,7 +18,7 @@ from absl.testing import absltest
 from absl.testing import parameterized
 import numpy as np
 
-from alphafold.common import residue_constants
+from af2_initial_guess.alphafold.common import residue_constants
 
 
 class ResidueConstantsTest(parameterized.TestCase):

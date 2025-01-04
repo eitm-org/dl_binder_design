@@ -25,10 +25,10 @@ import numpy as np
 
 # Internal import (7716).
 
-from alphafold.common import residue_constants
-from alphafold.data import mmcif_parsing
-from alphafold.data import parsers
-from alphafold.data.tools import kalign
+from af2_initial_guess.alphafold.common import residue_constants
+from af2_initial_guess.alphafold.data import mmcif_parsing
+from af2_initial_guess.alphafold.data import parsers
+from af2_initial_guess.alphafold.data.tools import kalign
 
 
 class Error(Exception):

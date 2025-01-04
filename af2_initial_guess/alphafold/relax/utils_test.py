@@ -19,8 +19,8 @@ import os
 from absl.testing import absltest
 import numpy as np
 
-from alphafold.common import protein
-from alphafold.relax import utils
+from af2_initial_guess.alphafold.common import protein
+from af2_initial_guess.alphafold.relax import utils
 # Internal import (7716).
 
 

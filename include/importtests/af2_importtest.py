@@ -37,16 +37,16 @@ import scipy
 import jax
 import jax.numpy as jnp
 
-from alphafold.common import residue_constants
-from alphafold.common import protein
-from alphafold.common import confidence
-from alphafold.data import pipeline
-from alphafold.data import templates
-from alphafold.data import mmcif_parsing
-from alphafold.model import data
-from alphafold.model import config
-from alphafold.model import model
-from alphafold.data.tools import hhsearch
+from af2_initial_guess.alphafold.common import residue_constants
+from af2_initial_guess.alphafold.common import protein
+from af2_initial_guess.alphafold.common import confidence
+from af2_initial_guess.alphafold.data import pipeline
+from af2_initial_guess.alphafold.data import templates
+from af2_initial_guess.alphafold.data import mmcif_parsing
+from af2_initial_guess.alphafold.model import data
+from af2_initial_guess.alphafold.model import config
+from af2_initial_guess.alphafold.model import model
+from af2_initial_guess.alphafold.data.tools import hhsearch
 
 sys.path.append(f'{scriptdir}/../..')
 from include.silent_tools import silent_tools

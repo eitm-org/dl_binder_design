@@ -23,13 +23,13 @@ import jax.numpy as jnp
 import ml_collections
 import numpy as np
 
-from alphafold.common import residue_constants
-from alphafold.model import all_atom
-from alphafold.model import common_modules
-from alphafold.model import prng
-from alphafold.model import quat_affine
-from alphafold.model import r3
-from alphafold.model import utils
+from af2_initial_guess.alphafold.common import residue_constants
+from af2_initial_guess.alphafold.model import all_atom
+from af2_initial_guess.alphafold.model import common_modules
+from af2_initial_guess.alphafold.model import prng
+from af2_initial_guess.alphafold.model import quat_affine
+from af2_initial_guess.alphafold.model import r3
+from af2_initial_guess.alphafold.model import utils
 
 
 def squared_difference(x, y):

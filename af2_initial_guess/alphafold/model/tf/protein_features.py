@@ -18,7 +18,7 @@ from typing import Dict, Optional, Sequence, Tuple, Union
 
 import tensorflow.compat.v1 as tf
 
-from alphafold.common import residue_constants
+from af2_initial_guess.alphafold.common import residue_constants
 
 # Type aliases.
 FeaturesMetadata = Dict[str, Tuple[tf.dtypes.DType, Sequence[Union[str, int]]]]

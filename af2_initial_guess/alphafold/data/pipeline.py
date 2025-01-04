@@ -21,12 +21,12 @@ import numpy as np
 
 # Internal import (7716).
 
-from alphafold.common import residue_constants
-from alphafold.data import parsers
-from alphafold.data import templates
-from alphafold.data.tools import hhblits
-from alphafold.data.tools import hhsearch
-from alphafold.data.tools import jackhmmer
+from af2_initial_guess.alphafold.common import residue_constants
+from af2_initial_guess.alphafold.data import parsers
+from af2_initial_guess.alphafold.data import templates
+from af2_initial_guess.alphafold.data.tools import hhblits
+from af2_initial_guess.alphafold.data.tools import hhsearch
+from af2_initial_guess.alphafold.data.tools import jackhmmer
 
 FeatureDict = Mapping[str, np.ndarray]
 

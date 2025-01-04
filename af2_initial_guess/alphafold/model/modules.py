@@ -24,16 +24,16 @@ import jax.numpy as jnp
 
 import jmp
 
-from alphafold.common import residue_constants
-from alphafold.model import all_atom
-from alphafold.model import common_modules
-from alphafold.model import folding
-from alphafold.model import layer_stack
-from alphafold.model import lddt
-from alphafold.model import mapping
-from alphafold.model import prng
-from alphafold.model import quat_affine
-from alphafold.model import utils
+from af2_initial_guess.alphafold.common import residue_constants
+from af2_initial_guess.alphafold.model import all_atom
+from af2_initial_guess.alphafold.model import common_modules
+from af2_initial_guess.alphafold.model import folding
+from af2_initial_guess.alphafold.model import layer_stack
+from af2_initial_guess.alphafold.model import lddt
+from af2_initial_guess.alphafold.model import mapping
+from af2_initial_guess.alphafold.model import prng
+from af2_initial_guess.alphafold.model import quat_affine
+from af2_initial_guess.alphafold.model import utils
 
 
 def softmax_cross_entropy(logits, labels):

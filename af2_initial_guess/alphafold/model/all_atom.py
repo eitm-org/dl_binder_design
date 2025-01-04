@@ -39,10 +39,10 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 
-from alphafold.common import residue_constants
+from af2_initial_guess.alphafold.common import residue_constants
 
-from alphafold.model import r3
-from alphafold.model import utils
+from af2_initial_guess.alphafold.model import r3
+from af2_initial_guess.alphafold.model import utils
 
 
 def squared_difference(x, y):

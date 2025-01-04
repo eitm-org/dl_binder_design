@@ -23,9 +23,9 @@ import numpy as np
 import tensorflow.compat.v1 as tf
 import tree
 
-from alphafold.common import confidence
-from alphafold.model import features
-from alphafold.model import modules
+from af2_initial_guess.alphafold.common import confidence
+from af2_initial_guess.alphafold.model import features
+from af2_initial_guess.alphafold.model import modules
 
 
 def get_confidence_metrics(

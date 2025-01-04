@@ -37,7 +37,7 @@ from typing import List
 import jax.numpy as jnp
 import tree
 
-from alphafold.model import quat_affine
+from af2_initial_guess.alphafold.model import quat_affine
 
 # Array of 3-component vectors, stored as individual array for
 # each component.

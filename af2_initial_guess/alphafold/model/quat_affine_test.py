@@ -19,7 +19,7 @@ from absl.testing import absltest
 import jax
 import jax.numpy as jnp
 import numpy as np
-from alphafold.model import quat_affine
+from af2_initial_guess.alphafold.model import quat_affine
 
 VERBOSE = False
 np.set_printoptions(precision=3, suppress=True)

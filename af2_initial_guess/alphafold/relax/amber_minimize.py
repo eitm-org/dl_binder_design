@@ -26,11 +26,11 @@ from simtk import unit
 from simtk.openmm import app as openmm_app
 from simtk.openmm.app.internal.pdbstructure import PdbStructure
 
-from alphafold.common import protein
-from alphafold.common import residue_constants
-from alphafold.model import folding
-from alphafold.relax import cleanup
-from alphafold.relax import utils
+from af2_initial_guess.alphafold.common import protein
+from af2_initial_guess.alphafold.common import residue_constants
+from af2_initial_guess.alphafold.model import folding
+from af2_initial_guess.alphafold.relax import cleanup
+from af2_initial_guess.alphafold.relax import utils
 
 
 ENERGY = unit.kilocalories_per_mole

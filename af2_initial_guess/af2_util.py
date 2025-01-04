@@ -6,7 +6,7 @@ import collections
 from collections import OrderedDict
 import os
 
-from alphafold.common import residue_constants
+from af2_initial_guess.alphafold.common import residue_constants
 
 import jax.numpy as jnp
 

@@ -21,7 +21,7 @@ from typing import List
 import haiku as hk
 import numpy as np
 
-from alphafold.model import utils
+from af2_initial_guess.alphafold.model import utils
 # Internal import (7716).
 
 
