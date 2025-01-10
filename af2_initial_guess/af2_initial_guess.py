@@ -507,7 +507,7 @@ def run(config_file):
 
     # I/O Arguments
     parser.add_argument( "-seqdir", type=str, default=conf.af2ig.seqdir, help='The name of a directory of seqs to run through the model' )
-    parser.add_argument( "-pdbdir", type=str, default=conf.af2ig.pdbdir, help='The name of a directory of pdbs to run through the model' )
+    parser.add_argument( "-pdbdir", type=str, default=conf.af2ig.ig_pdbdir, help='The name of a directory of pdbs to run through the model' )
     parser.add_argument( "-silent", type=str, default=conf.af2ig.silent, help='The name of a silent file to run through the model' )
     parser.add_argument( "-outdir", type=str, default=os.path.join(conf.af2ig.outdir, 'initial_guess'), help='The directory to which all output files will be written' )
     parser.add_argument( "-checkpoint_name", type=str, default=os.path.join(conf.af2ig.outdir, 'check.point'), help="The name of a file where tags which have finished will be written (default: check.point)" )
