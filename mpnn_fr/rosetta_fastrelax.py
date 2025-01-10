@@ -313,7 +313,7 @@ def run(config_file):
     parser = argparse.ArgumentParser()
 
     parser.add_argument( "--seqdir", type=str, default=conf.af2ig.seqdir, help='The name of a directory of seqs to run through the model' )
-    parser.add_argument( "--pdbdir", type=str, default=conf.af2ig.pdbdir, help='The name of a directory of pdbs to run through the model' )
+    parser.add_argument( "--pdbdir", type=str, default=conf.af2ig.fr_pdbdir, help='The name of a directory of pdbs to run through the model' )
     parser.add_argument( "--silent", type=str, default=conf.af2ig.silent, help='The name of a silent file to run through the model' )
     parser.add_argument( "--outdir", type=str, default=os.path.join(conf.af2ig.outdir, 'fast_relax'), help='The directory to which all output files will be written' )
 
